@@ -90,7 +90,7 @@ public class OrdersServiceTest {
 
     @Test
     @Tag("happy_path")
-    @Tag("retrieve_order_redis")
+    @Tag("retrieve_order")
     void shouldReturnOkHttpResponseForRedisRetrievalOnSuccess() {
         EnrichedOrderDTO mockEnrichedOrderDTO = new EnrichedOrderDTO();
         mockEnrichedOrderDTO.setOrderId("12345");
