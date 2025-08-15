@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Model representing order details.
@@ -14,11 +15,16 @@ import java.util.ArrayList;
 @Data
 @NoArgsConstructor
 public class EnrichedOrderDTO implements Serializable {
-    private CustomerEntity customerEntity;
-    private String customerId;
     private String orderId;
-    private ArrayList<ProductEntity> productEntities;
-    private ArrayList<String> productIds;
     private ZonedDateTime timestamp;
+    private ArrayList<String> productIds;
     private String responseMessage;
+
+    private List<ProductDTO> productDTOS;
+
+    private String customerId;
+    private String name;
+    private String street;
+    private String zip;
+    private String country;
 }

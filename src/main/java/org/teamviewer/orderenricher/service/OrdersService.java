@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.teamviewer.orderenricher.model.CustomerEntity;
 import org.teamviewer.orderenricher.model.EnrichedOrderDTO;
 import org.teamviewer.orderenricher.model.EnrichedOrderEntity;
+import org.teamviewer.orderenricher.model.ProductDTO;
 import org.teamviewer.orderenricher.model.ProductEntity;
 import org.teamviewer.orderenricher.repository.CustomerRepository;
 import org.teamviewer.orderenricher.repository.EnrichedOrderRepository;
@@ -53,38 +54,52 @@ public class OrdersService {
         CustomerEntity customerEntity = customerRepository.findCustomerByCustomerId(enrichedOrderDTO.getCustomerId());
         ArrayList<ProductEntity> productEntities = findCustomerProducts(enrichedOrderDTO);
 
-        // while I could have made it all one line above, adding the final assignment here for more readability
-        enrichedOrderDTO.setCustomerEntity(customerEntity);
-        enrichedOrderDTO.setProductEntities(productEntities);
+        EnrichedOrderEntity enrichedOrderEntity;
+        enrichedOrderEntity = enrichedOrderDtoToEntity(enrichedOrderDTO);
+        enrichedOrderEntity.setCustomer(customerEntity);
+        enrichedOrderEntity.setProducts(productEntities);
 
-        // create the Entity version
-        EnrichedOrderEntity enrichedOrderEntity = new EnrichedOrderEntity();
-        enrichedOrderEntity.setCustomer(enrichedOrderDTO.getCustomerEntity());
-        enrichedOrderEntity.setProducts(enrichedOrderDTO.getProductEntities());
-        enrichedOrderEntity.setOrderId(enrichedOrderDTO.getOrderId());
-        enrichedOrderEntity.setTimestamp(enrichedOrderDTO.getTimestamp());
-
-        // saves order detail record to Redis with the orderId as the key
-        redisTemplate.opsForValue().set(enrichedOrderDTO.getOrderId(), enrichedOrderDTO);
         // save to the enriched_order table
         enrichedOrderRepository.save(enrichedOrderEntity);
 
-        return ResponseEntity.ok(enrichedOrderDTO);
+        EnrichedOrderDTO returnedEnrichedOrderDTO = enrichedOrderEntityToDto(enrichedOrderEntity);
+        returnedEnrichedOrderDTO.setProductIds(enrichedOrderDTO.getProductIds());
+
+        // saves order detail record to Redis with the orderId as the key
+        redisTemplate.opsForValue().set(returnedEnrichedOrderDTO.getOrderId(), returnedEnrichedOrderDTO);
+
+        return ResponseEntity.ok(returnedEnrichedOrderDTO);
     }
 
     public ResponseEntity<EnrichedOrderDTO> retrieveOrderDetail(final String orderId) {
+        EnrichedOrderEntity enrichedOrderEntity;
+
         // check to see if the record has been sent recently and is stored in Redis
         EnrichedOrderDTO enrichedOrderDTO = redisTemplate.opsForValue().get(orderId);
 
-        /*if (enrichedOrderDTO == null) {
-            enrichedOrderDTO =
-        }*/
-
+        // if it was not found in Redis cache, check database table
         if (enrichedOrderDTO == null) {
-            enrichedOrderDTO = new EnrichedOrderDTO();
-            enrichedOrderDTO.setResponseMessage("Order was not found with orderId: " + orderId);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(enrichedOrderDTO);
+            enrichedOrderEntity = enrichedOrderRepository.findEnrichedOrderEntityByOrderId(orderId);
+
+            if (enrichedOrderEntity == null) {
+                // if we get here, it was neither in Redis nor in the enrich_order table
+                enrichedOrderDTO = new EnrichedOrderDTO();
+                enrichedOrderDTO.setResponseMessage("Order was not found with orderId: " + orderId);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(enrichedOrderDTO);
+            } else {
+                enrichedOrderDTO = enrichedOrderEntityToDto(enrichedOrderEntity);
+
+                ArrayList<String> productIds = new ArrayList<>();
+                for(ProductEntity productEntity : enrichedOrderEntity.getProducts() ) {
+                    productIds.add(productEntity.getProductId());
+                }
+                enrichedOrderDTO.setProductIds(productIds);
+
+                // save to Redis in case this order is asked for again
+                redisTemplate.opsForValue().set(enrichedOrderDTO.getOrderId(), enrichedOrderDTO);
+            }
         }
+
         return ResponseEntity.ok(enrichedOrderDTO);
     }
 
@@ -97,5 +112,79 @@ public class OrdersService {
         }
 
         return productEntities;
+    }
+
+    private EnrichedOrderEntity enrichedOrderDtoToEntity(EnrichedOrderDTO enrichedOrderDTO) {
+        EnrichedOrderEntity enrichedOrderEntity = new EnrichedOrderEntity();
+        enrichedOrderEntity.setOrderId(enrichedOrderDTO.getOrderId());
+        enrichedOrderEntity.setTimestamp(enrichedOrderDTO.getTimestamp());
+
+        // set customer information
+        if (enrichedOrderEntity.getCustomer() != null) {
+            enrichedOrderEntity.getCustomer().setCustomerId(enrichedOrderDTO.getCustomerId());
+            enrichedOrderEntity.getCustomer().setName(enrichedOrderDTO.getName());
+            enrichedOrderEntity.getCustomer().setStreet(enrichedOrderDTO.getStreet());
+            enrichedOrderEntity.getCustomer().setZip(enrichedOrderDTO.getZip());
+            enrichedOrderEntity.getCustomer().setCountry(enrichedOrderDTO.getCountry());
+        }
+
+        // set product information
+        ArrayList<ProductEntity> productEntities = new ArrayList<>();
+        if (enrichedOrderEntity.getProducts() != null) {
+            for (ProductDTO productDTO : enrichedOrderDTO.getProductDTOS()) {
+                productEntities.add(productDtoToEntity(productDTO));
+            }
+        }
+        enrichedOrderEntity.setProducts(productEntities);
+
+        return enrichedOrderEntity;
+    }
+
+    private EnrichedOrderDTO enrichedOrderEntityToDto(EnrichedOrderEntity enrichedOrderEntity) {
+        EnrichedOrderDTO enrichedOrderDTO = new EnrichedOrderDTO();
+        enrichedOrderDTO.setOrderId(enrichedOrderEntity.getOrderId());
+        enrichedOrderDTO.setTimestamp(enrichedOrderEntity.getTimestamp());
+
+        // set customer information in the DTO
+        if (enrichedOrderEntity.getCustomer() != null) {
+            enrichedOrderDTO.setCustomerId(enrichedOrderEntity.getCustomer().getCustomerId());
+            enrichedOrderDTO.setName(enrichedOrderEntity.getCustomer().getName());
+            enrichedOrderDTO.setStreet(enrichedOrderEntity.getCustomer().getStreet());
+            enrichedOrderDTO.setZip(enrichedOrderEntity.getCustomer().getZip());
+            enrichedOrderDTO.setCountry(enrichedOrderEntity.getCustomer().getCountry());
+        }
+
+        // set product information in the DTO
+        ArrayList<ProductDTO> productDTOS = new ArrayList<>();
+
+        for (ProductEntity productEntity : enrichedOrderEntity.getProducts()) {
+            productDTOS.add(productEntityToDto(productEntity));
+        }
+
+        enrichedOrderDTO.setProductDTOS(productDTOS);
+
+        return enrichedOrderDTO;
+    }
+
+    private ProductDTO productEntityToDto(ProductEntity productEntity) {
+        ProductDTO productDTO = new ProductDTO();
+        productDTO.setProductId(productEntity.getProductId());
+        productDTO.setCategory(productEntity.getCategory());
+        productDTO.setName(productEntity.getName());
+        productDTO.setPrice(productEntity.getPrice());
+        productDTO.setTags(productEntity.getTags());
+
+        return productDTO;
+    }
+
+    private ProductEntity productDtoToEntity(ProductDTO productDTO) {
+        ProductEntity productEntity = new ProductEntity();
+        productEntity.setProductId(productDTO.getProductId());
+        productEntity.setCategory(productDTO.getCategory());
+        productEntity.setName(productDTO.getName());
+        productEntity.setPrice(productDTO.getPrice());
+        productEntity.setTags(productDTO.getTags());
+
+        return productEntity;
     }
 }

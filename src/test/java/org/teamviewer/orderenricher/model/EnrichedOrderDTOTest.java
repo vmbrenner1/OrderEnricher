@@ -32,13 +32,13 @@ public class EnrichedOrderDTOTest {
         mockProductIds.add("474748");
         mockEnrichedOrderDTO.setCustomerId("12345");
         mockEnrichedOrderDTO.setCustomerEntity(mockCustomerEntity);
-        mockEnrichedOrderDTO.setProductEntities(mockProductEntities);
+        mockEnrichedOrderDTO.setProductDTOS(mockProductEntities);
         mockEnrichedOrderDTO.setOrderId("12345");
         mockEnrichedOrderDTO.setTimestamp(zonedDateTime);
         mockEnrichedOrderDTO.setProductIds(mockProductIds);
 
         Assertions.assertEquals("12345", mockEnrichedOrderDTO.getCustomerEntity().getCustomerId());
-        Assertions.assertEquals("474748", mockEnrichedOrderDTO.getProductEntities().get(0).getProductId());
+        Assertions.assertEquals("474748", mockEnrichedOrderDTO.getProductDTOS().get(0).getProductId());
         Assertions.assertEquals("12345", mockEnrichedOrderDTO.getCustomerId());
         Assertions.assertEquals("474748", mockEnrichedOrderDTO.getProductIds().get(0));
         Assertions.assertEquals(zonedDateTime, mockEnrichedOrderDTO.getTimestamp());

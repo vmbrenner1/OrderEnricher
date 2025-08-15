@@ -6,5 +6,5 @@ import org.teamviewer.orderenricher.model.EnrichedOrderEntity;
 
 @Repository
 public interface EnrichedOrderRepository extends JpaRepository<EnrichedOrderEntity, Long> {
-
+    EnrichedOrderEntity findEnrichedOrderEntityByOrderId(String orderId);
 }

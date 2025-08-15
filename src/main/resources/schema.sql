@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS customer (
 );
 
 CREATE TABLE IF NOT EXISTS enriched_order (
-    id LONG PRIMARY KEY,
+    enriched_order_id LONG PRIMARY KEY,
     order_id VARCHAR(255),
     timestamp TIMESTAMP WITH TIME ZONE,
     customer_id VARCHAR(6),
