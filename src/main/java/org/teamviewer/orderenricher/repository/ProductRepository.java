@@ -1,12 +1,15 @@
 package org.teamviewer.orderenricher.repository;
 
-import org.springframework.stereotype.Service;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import org.teamviewer.orderenricher.model.ProductEntity;
 
 /**
  * Repository for managing product information.
  * The function of the repository is to store the data into the database.
  */
-@Service
-public class ProductRepository {
-
+@Repository
+public interface ProductRepository extends JpaRepository<ProductEntity, String> {
+    // finds details on product based on product id
+    ProductEntity findProductByProductId(String productId);
 }
