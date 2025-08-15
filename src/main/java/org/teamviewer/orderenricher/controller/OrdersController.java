@@ -31,7 +31,7 @@ public class OrdersController {
      */
     @Operation(summary = "Get Order Information", description = "Endpoint to get enriched order information based on the provided order ID.")
     @GetMapping({"/{orderId}"})
-    private ResponseEntity<OrderDetail> orders(@PathVariable String orderId) {
+    public ResponseEntity<OrderDetail> orders(@PathVariable String orderId) {
         return ordersService.retrieveOrderDetail(orderId);
     }
 
@@ -42,7 +42,7 @@ public class OrdersController {
      */
     @Operation(summary = "Receive Order", description = "Endpoint to send order information to be received.")
     @PostMapping()
-    private ResponseEntity<OrderDetail> orders(@RequestBody OrderDetail orderDetail) {
+    public ResponseEntity<OrderDetail> orders(@RequestBody OrderDetail orderDetail) {
         return ordersService.enrichOrder(orderDetail);
     }
 }

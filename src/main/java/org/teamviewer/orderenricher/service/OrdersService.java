@@ -21,6 +21,12 @@ public class OrdersService {
     final private ProductRepository productRepository;
     final private RedisTemplate<String, OrderDetail> redisTemplate;
 
+    /**
+     * Basic constructor for the Order Service
+     * @param customerRepository    Customer Repository
+     * @param productRepository     Product Repository
+     * @param redisTemplate         Redis Template for Redis Caching
+     */
     @Autowired
     public OrdersService(final CustomerRepository customerRepository,
                          final ProductRepository productRepository,
