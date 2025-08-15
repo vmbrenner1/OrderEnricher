@@ -18,6 +18,10 @@ import lombok.ToString;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+/**
+ * Entity representing enriched orders in the 'enriched_order' table.
+ * Entity ID: order_id
+ */
 @Entity
 @NoArgsConstructor
 @Getter

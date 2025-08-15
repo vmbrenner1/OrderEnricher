@@ -47,9 +47,8 @@ public class OrdersService {
      * Method that will process the order received by the controller, separating pieces as needed for storing in the database.
      *
      * @param enrichedOrderDTO   The details of the order including customer and product information, order indentifier, and timestamp of order placed.
-     * @return              A ResponseEntity indicating the result of the operation.
+     * @return                   A ResponseEntity indicating the result of the operation.
      */
-    // TODO: Paramerterize this endpoint to have the correct object returned
     public ResponseEntity<EnrichedOrderDTO> enrichOrder(final EnrichedOrderDTO enrichedOrderDTO) {
         CustomerEntity customerEntity = customerRepository.findCustomerByCustomerId(enrichedOrderDTO.getCustomerId());
         ArrayList<ProductEntity> productEntities = findCustomerProducts(enrichedOrderDTO);
@@ -71,6 +70,15 @@ public class OrdersService {
         return ResponseEntity.ok(returnedEnrichedOrderDTO);
     }
 
+    /**
+     * Service method that will retrieve the requested Enriched Order Detail by:
+     *  1) Checking if it exists in the Redis Cache
+     *  2) If it does not exist in Redis, it will check the database table enrich_order
+     *      2.5) It will save the Enriched Order in Redis for future retrieval attempts
+     *  3) If it does not exist in either place, it will return a NOT_FOUND code with the empty DTO containing a response message
+     * @param orderId       OrderID associated with an order
+     * @return              Status of the response
+     */
     public ResponseEntity<EnrichedOrderDTO> retrieveOrderDetail(final String orderId) {
         EnrichedOrderEntity enrichedOrderEntity;
 

@@ -5,6 +5,9 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+/**
+ * DTO for transferring Product information from the backend to the frontend.
+ */
 @Data
 @NoArgsConstructor
 public class ProductDTO implements Serializable {

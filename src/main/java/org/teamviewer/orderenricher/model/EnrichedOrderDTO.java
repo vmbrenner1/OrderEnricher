@@ -9,8 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Model representing order details.
- * This class contains all fields required pre- and post- order enrichment
+ * DTO representing enriched order details for transferring data between the frontend and backend.
  */
 @Data
 @NoArgsConstructor

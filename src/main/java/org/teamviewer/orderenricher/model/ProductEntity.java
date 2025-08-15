@@ -2,8 +2,6 @@ package org.teamviewer.orderenricher.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
@@ -13,9 +11,9 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * Model representing a product's information.
+ * Model representing a product's information in the 'product' table.
  * This class contains fields for the product's name, price, category, and tags.
- * Entity ID: productId
+ * Entity ID: product_id
  */
 @Entity
 @NoArgsConstructor

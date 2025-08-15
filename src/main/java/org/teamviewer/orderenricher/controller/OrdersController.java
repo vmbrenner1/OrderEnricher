@@ -25,20 +25,20 @@ public class OrdersController {
     }
 
     /**
-     * Endpoint to get enriched order information based on the provided order ID.
+     * Endpoint to retrieve enriched order information based on the provided order ID.
      * @param orderId   The orderId associated with the order information.
      * @return          HTTP Response with the enriched EnrichedOrderDTO
      */
-    @Operation(summary = "Get Order Information", description = "Endpoint to get enriched order information based on the provided order ID.")
+    @Operation(summary = "Retrieve Order Information", description = "Endpoint to retrieve enriched order information based on the provided order ID.")
     @GetMapping({"/{orderId}"})
     public ResponseEntity<EnrichedOrderDTO> orders(@PathVariable String orderId) {
         return ordersService.retrieveOrderDetail(orderId);
     }
 
     /**
-     *
-     * @param enrichedOrderDTO
-     * @return
+     * Endpoint that will take the basic information of an order and enrich it with further Customer and Product information
+     * @param enrichedOrderDTO      DTO containing the basic order information (orderId, customerId, productIds, timestamp)
+     * @return                      HTTP status containing a new DTO with the enriched data
      */
     @Operation(summary = "Receive Order", description = "Endpoint to send order information to be received.")
     @PostMapping()

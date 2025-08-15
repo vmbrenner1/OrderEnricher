@@ -11,36 +11,38 @@ public class EnrichedOrderDTOTest {
     public void testGettersAndSetters() {
         ZonedDateTime zonedDateTime = ZonedDateTime.now();
 
-        CustomerEntity mockCustomerEntity = new CustomerEntity();
-        mockCustomerEntity.setName("Victoria");
-        mockCustomerEntity.setZip("77777");
-        mockCustomerEntity.setStreet("Neverland Street");
-        mockCustomerEntity.setCountry("United States");
-        mockCustomerEntity.setCustomerId("12345");
-
-        ProductEntity mockProductEntity = new ProductEntity();
-        mockProductEntity.setProductId("474748");
-        mockProductEntity.setName("Ice Cream");
-        mockProductEntity.setCategory("Food");
-        mockProductEntity.setPrice("13.64");
-        mockProductEntity.setTags("chocolate,rocky road,vanilla,strawberry");
-        ArrayList<ProductEntity> mockProductEntities = new ArrayList<>();
-        mockProductEntities.add(mockProductEntity);
+        ProductDTO mockProductDTO = new ProductDTO();
+        mockProductDTO.setProductId("474748");
+        mockProductDTO.setName("Ice Cream");
+        mockProductDTO.setCategory("Food");
+        mockProductDTO.setPrice("13.64");
+        mockProductDTO.setTags("chocolate,rocky road,vanilla,strawberry");
+        ArrayList<ProductDTO> mockProductDTOs = new ArrayList<>();
+        mockProductDTOs.add(mockProductDTO);
 
         EnrichedOrderDTO mockEnrichedOrderDTO = new EnrichedOrderDTO();
         ArrayList<String> mockProductIds = new ArrayList<>();
         mockProductIds.add("474748");
         mockEnrichedOrderDTO.setCustomerId("12345");
-        mockEnrichedOrderDTO.setCustomerEntity(mockCustomerEntity);
-        mockEnrichedOrderDTO.setProductDTOS(mockProductEntities);
+        mockEnrichedOrderDTO.setProductDTOS(mockProductDTOs);
         mockEnrichedOrderDTO.setOrderId("12345");
         mockEnrichedOrderDTO.setTimestamp(zonedDateTime);
         mockEnrichedOrderDTO.setProductIds(mockProductIds);
 
-        Assertions.assertEquals("12345", mockEnrichedOrderDTO.getCustomerEntity().getCustomerId());
-        Assertions.assertEquals("474748", mockEnrichedOrderDTO.getProductDTOS().get(0).getProductId());
+        mockEnrichedOrderDTO.setName("Victoria");
+        mockEnrichedOrderDTO.setZip("77777");
+        mockEnrichedOrderDTO.setStreet("Neverland Street");
+        mockEnrichedOrderDTO.setCountry("United States");
+        mockEnrichedOrderDTO.setCustomerId("12345");
+
         Assertions.assertEquals("12345", mockEnrichedOrderDTO.getCustomerId());
+        Assertions.assertEquals("474748", mockEnrichedOrderDTO.getProductDTOS().get(0).getProductId());
         Assertions.assertEquals("474748", mockEnrichedOrderDTO.getProductIds().get(0));
+        Assertions.assertEquals("Victoria", mockEnrichedOrderDTO.getName());
+        Assertions.assertEquals("77777", mockEnrichedOrderDTO.getZip());
+        Assertions.assertEquals("Neverland Street", mockEnrichedOrderDTO.getStreet());
+        Assertions.assertEquals("United States", mockEnrichedOrderDTO.getCountry());
+        Assertions.assertEquals("12345", mockEnrichedOrderDTO.getCustomerId());
         Assertions.assertEquals(zonedDateTime, mockEnrichedOrderDTO.getTimestamp());
     }
 }

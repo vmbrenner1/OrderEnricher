@@ -2,8 +2,6 @@ package org.teamviewer.orderenricher.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
@@ -13,9 +11,9 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * Model representing a customer's information.
+ * Entity representing a customer's information in the 'customer' table.
  * This class contains fields for the customer's name, street, zip code, and country.
- * Entity ID: customerId
+ * Entity ID: customer_id
  */
 @Entity
 @NoArgsConstructor
