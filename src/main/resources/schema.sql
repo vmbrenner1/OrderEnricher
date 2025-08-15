@@ -14,4 +14,14 @@ CREATE TABLE IF NOT EXISTS customer (
     name VARCHAR(255),
     street VARCHAR(255),
     zip VARCHAR(10)
-)
+);
+
+CREATE TABLE IF NOT EXISTS enriched_order (
+    id LONG PRIMARY KEY,
+    order_id VARCHAR(255),
+    timestamp TIMESTAMP WITH TIME ZONE,
+    customer_id VARCHAR(6),
+    CONSTRAINT fk_customer
+        FOREIGN KEY (customer_id)
+        REFERENCES customer(customer_id)
+);

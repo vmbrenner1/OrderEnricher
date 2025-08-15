@@ -12,7 +12,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.ResponseEntity;
 import org.teamviewer.orderenricher.model.CustomerEntity;
-import org.teamviewer.orderenricher.model.OrderDetail;
+import org.teamviewer.orderenricher.model.EnrichedOrderDTO;
 import org.teamviewer.orderenricher.model.ProductEntity;
 import org.teamviewer.orderenricher.repository.CustomerRepository;
 import org.teamviewer.orderenricher.repository.ProductRepository;
@@ -27,9 +27,9 @@ public class OrdersServiceTest {
     @Mock
     private ProductRepository mockProductRepository;
     @Mock
-    private RedisTemplate<String, OrderDetail> mockRedisTemplate;
+    private RedisTemplate<String, EnrichedOrderDTO> mockRedisTemplate;
     @Mock
-    private ValueOperations<String, OrderDetail> mockValueOperations;
+    private ValueOperations<String, EnrichedOrderDTO> mockValueOperations;
 
     @InjectMocks
     private OrdersService ordersService;
@@ -38,13 +38,13 @@ public class OrdersServiceTest {
     @Tag("happy_path")
     @Tag("enrich_order")
     void shouldReturnOkHttpResponseForEnrichmentOnSuccess() {
-        OrderDetail mockOrderDetail = new OrderDetail();
-        mockOrderDetail.setOrderId("12345");
-        mockOrderDetail.setTimestamp(ZonedDateTime.now());
+        EnrichedOrderDTO mockEnrichedOrderDTO = new EnrichedOrderDTO();
+        mockEnrichedOrderDTO.setOrderId("12345");
+        mockEnrichedOrderDTO.setTimestamp(ZonedDateTime.now());
         ArrayList<String> productIds = new ArrayList<>();
         productIds.add("175");
         productIds.add("124");
-        mockOrderDetail.setProductIds(productIds);
+        mockEnrichedOrderDTO.setProductIds(productIds);
 
         CustomerEntity mockCustomerEntity = new CustomerEntity();
         mockCustomerEntity.setName("Victoria");
@@ -61,13 +61,13 @@ public class OrdersServiceTest {
         mockProductEntity.setTags("chocolate,rocky road,vanilla,strawberry");
 
         Mockito.when(mockRedisTemplate.opsForValue()).thenReturn(mockValueOperations);
-        Mockito.when(mockCustomerRepository.findCustomerByCustomerId(mockOrderDetail.getCustomerId())).thenReturn(mockCustomerEntity);
-        Mockito.when(mockProductRepository.findProductByProductId(mockOrderDetail.getProductIds().get(0))).thenReturn(mockProductEntity);
-        Mockito.doNothing().when(mockValueOperations).set(Mockito.anyString(), Mockito.any(OrderDetail.class));
+        Mockito.when(mockCustomerRepository.findCustomerByCustomerId(mockEnrichedOrderDTO.getCustomerId())).thenReturn(mockCustomerEntity);
+        Mockito.when(mockProductRepository.findProductByProductId(mockEnrichedOrderDTO.getProductIds().get(0))).thenReturn(mockProductEntity);
+        Mockito.doNothing().when(mockValueOperations).set(Mockito.anyString(), Mockito.any(EnrichedOrderDTO.class));
 
-        ResponseEntity<OrderDetail> actualResponse = ordersService.enrichOrder(mockOrderDetail);
+        ResponseEntity<EnrichedOrderDTO> actualResponse = ordersService.enrichOrder(mockEnrichedOrderDTO);
 
-        ResponseEntity<OrderDetail> expectedResponse = ResponseEntity.ok(mockOrderDetail);
+        ResponseEntity<EnrichedOrderDTO> expectedResponse = ResponseEntity.ok(mockEnrichedOrderDTO);
         Assertions.assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode());
     }
 
@@ -75,20 +75,20 @@ public class OrdersServiceTest {
     @Tag("happy_path")
     @Tag("retrieve_order")
     void shouldReturnOkHttpResponseForRetrievalOnSuccess() {
-        OrderDetail mockOrderDetail = new OrderDetail();
-        mockOrderDetail.setOrderId("12345");
-        mockOrderDetail.setTimestamp(ZonedDateTime.now());
+        EnrichedOrderDTO mockEnrichedOrderDTO = new EnrichedOrderDTO();
+        mockEnrichedOrderDTO.setOrderId("12345");
+        mockEnrichedOrderDTO.setTimestamp(ZonedDateTime.now());
         ArrayList<String> productIds = new ArrayList<>();
         productIds.add("175");
         productIds.add("124");
-        mockOrderDetail.setProductIds(productIds);
+        mockEnrichedOrderDTO.setProductIds(productIds);
 
         Mockito.when(mockRedisTemplate.opsForValue()).thenReturn(mockValueOperations);
-        Mockito.when(mockValueOperations.get(Mockito.anyString())).thenReturn(mockOrderDetail);
+        Mockito.when(mockValueOperations.get(Mockito.anyString())).thenReturn(mockEnrichedOrderDTO);
 
-        ResponseEntity<OrderDetail> actualResponse = ordersService.retrieveOrderDetail(mockOrderDetail.getOrderId());
+        ResponseEntity<EnrichedOrderDTO> actualResponse = ordersService.retrieveOrderDetail(mockEnrichedOrderDTO.getOrderId());
 
-        ResponseEntity<OrderDetail> expectedResponse = ResponseEntity.ok(mockOrderDetail);
+        ResponseEntity<EnrichedOrderDTO> expectedResponse = ResponseEntity.ok(mockEnrichedOrderDTO);
         Assertions.assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode());
     }
 }

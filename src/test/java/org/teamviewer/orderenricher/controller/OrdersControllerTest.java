@@ -9,7 +9,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
-import org.teamviewer.orderenricher.model.OrderDetail;
+import org.teamviewer.orderenricher.model.EnrichedOrderDTO;
 import org.teamviewer.orderenricher.service.OrdersService;
 
 import java.time.ZonedDateTime;
@@ -26,18 +26,18 @@ public class OrdersControllerTest {
     @Tag("happy_path")
     @Tag("post_orders")
     void shouldReturnOkHttpResponseForPostOnSuccess() {
-        OrderDetail orderDetail = new OrderDetail();
-        orderDetail.setOrderId("12345");
-        orderDetail.setTimestamp(ZonedDateTime.now());
+        EnrichedOrderDTO enrichedOrderDTO = new EnrichedOrderDTO();
+        enrichedOrderDTO.setOrderId("12345");
+        enrichedOrderDTO.setTimestamp(ZonedDateTime.now());
         ArrayList<String> productIds = new ArrayList<>();
         productIds.add("175");
         productIds.add("124");
-        orderDetail.setProductIds(productIds);
-        ResponseEntity<OrderDetail> expectedResponse = ResponseEntity.ok(orderDetail);
+        enrichedOrderDTO.setProductIds(productIds);
+        ResponseEntity<EnrichedOrderDTO> expectedResponse = ResponseEntity.ok(enrichedOrderDTO);
 
-        Mockito.when(mockOrdersService.enrichOrder(orderDetail)).thenReturn(ResponseEntity.ok(orderDetail));
+        Mockito.when(mockOrdersService.enrichOrder(enrichedOrderDTO)).thenReturn(ResponseEntity.ok(enrichedOrderDTO));
 
-        ResponseEntity<OrderDetail> actualResponse = ordersController.orders(orderDetail);
+        ResponseEntity<EnrichedOrderDTO> actualResponse = ordersController.orders(enrichedOrderDTO);
 
         Assertions.assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode());
     }
@@ -46,18 +46,18 @@ public class OrdersControllerTest {
     @Tag("happy_path")
     @Tag("get_orders")
     void shouldReturnOkHttpResponseForGetOnSuccess() {
-        OrderDetail orderDetail = new OrderDetail();
-        orderDetail.setOrderId("12345");
-        orderDetail.setTimestamp(ZonedDateTime.now());
+        EnrichedOrderDTO enrichedOrderDTO = new EnrichedOrderDTO();
+        enrichedOrderDTO.setOrderId("12345");
+        enrichedOrderDTO.setTimestamp(ZonedDateTime.now());
         ArrayList<String> productIds = new ArrayList<>();
         productIds.add("175");
         productIds.add("124");
-        orderDetail.setProductIds(productIds);
-        ResponseEntity<OrderDetail> expectedResponse = ResponseEntity.ok(orderDetail);
+        enrichedOrderDTO.setProductIds(productIds);
+        ResponseEntity<EnrichedOrderDTO> expectedResponse = ResponseEntity.ok(enrichedOrderDTO);
 
-        Mockito.when(mockOrdersService.retrieveOrderDetail(orderDetail.getOrderId())).thenReturn(ResponseEntity.ok(orderDetail));
+        Mockito.when(mockOrdersService.retrieveOrderDetail(enrichedOrderDTO.getOrderId())).thenReturn(ResponseEntity.ok(enrichedOrderDTO));
 
-        ResponseEntity<OrderDetail> actualResponse = ordersController.orders(orderDetail.getOrderId());
+        ResponseEntity<EnrichedOrderDTO> actualResponse = ordersController.orders(enrichedOrderDTO.getOrderId());
 
         Assertions.assertEquals(expectedResponse.getStatusCode(), actualResponse.getStatusCode());
     }

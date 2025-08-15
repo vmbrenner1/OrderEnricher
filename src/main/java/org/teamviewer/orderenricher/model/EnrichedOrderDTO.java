@@ -13,11 +13,12 @@ import java.util.ArrayList;
  */
 @Data
 @NoArgsConstructor
-public class OrderDetail implements Serializable {
+public class EnrichedOrderDTO implements Serializable {
     private CustomerEntity customerEntity;
     private String customerId;
     private String orderId;
     private ArrayList<ProductEntity> productEntities;
     private ArrayList<String> productIds;
     private ZonedDateTime timestamp;
+    private String responseMessage;
 }

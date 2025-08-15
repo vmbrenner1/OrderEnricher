@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.teamviewer.orderenricher.model.OrderDetail;
+import org.teamviewer.orderenricher.model.EnrichedOrderDTO;
 import org.teamviewer.orderenricher.service.OrdersService;
 
 /**
@@ -27,22 +27,22 @@ public class OrdersController {
     /**
      * Endpoint to get enriched order information based on the provided order ID.
      * @param orderId   The orderId associated with the order information.
-     * @return          HTTP Response with the enriched OrderDetail
+     * @return          HTTP Response with the enriched EnrichedOrderDTO
      */
     @Operation(summary = "Get Order Information", description = "Endpoint to get enriched order information based on the provided order ID.")
     @GetMapping({"/{orderId}"})
-    public ResponseEntity<OrderDetail> orders(@PathVariable String orderId) {
+    public ResponseEntity<EnrichedOrderDTO> orders(@PathVariable String orderId) {
         return ordersService.retrieveOrderDetail(orderId);
     }
 
     /**
      *
-     * @param orderDetail
+     * @param enrichedOrderDTO
      * @return
      */
     @Operation(summary = "Receive Order", description = "Endpoint to send order information to be received.")
     @PostMapping()
-    public ResponseEntity<OrderDetail> orders(@RequestBody OrderDetail orderDetail) {
-        return ordersService.enrichOrder(orderDetail);
+    public ResponseEntity<EnrichedOrderDTO> orders(@RequestBody EnrichedOrderDTO enrichedOrderDTO) {
+        return ordersService.enrichOrder(enrichedOrderDTO);
     }
 }

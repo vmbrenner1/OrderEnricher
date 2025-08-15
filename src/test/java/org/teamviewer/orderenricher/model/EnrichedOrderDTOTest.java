@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
-public class OrderDetailTest {
+public class EnrichedOrderDTOTest {
     @Test
     public void testGettersAndSetters() {
         ZonedDateTime zonedDateTime = ZonedDateTime.now();
@@ -27,20 +27,20 @@ public class OrderDetailTest {
         ArrayList<ProductEntity> mockProductEntities = new ArrayList<>();
         mockProductEntities.add(mockProductEntity);
 
-        OrderDetail mockOrderDetail = new OrderDetail();
+        EnrichedOrderDTO mockEnrichedOrderDTO = new EnrichedOrderDTO();
         ArrayList<String> mockProductIds = new ArrayList<>();
         mockProductIds.add("474748");
-        mockOrderDetail.setCustomerId("12345");
-        mockOrderDetail.setCustomerEntity(mockCustomerEntity);
-        mockOrderDetail.setProductEntities(mockProductEntities);
-        mockOrderDetail.setOrderId("12345");
-        mockOrderDetail.setTimestamp(zonedDateTime);
-        mockOrderDetail.setProductIds(mockProductIds);
+        mockEnrichedOrderDTO.setCustomerId("12345");
+        mockEnrichedOrderDTO.setCustomerEntity(mockCustomerEntity);
+        mockEnrichedOrderDTO.setProductEntities(mockProductEntities);
+        mockEnrichedOrderDTO.setOrderId("12345");
+        mockEnrichedOrderDTO.setTimestamp(zonedDateTime);
+        mockEnrichedOrderDTO.setProductIds(mockProductIds);
 
-        Assertions.assertEquals("12345", mockOrderDetail.getCustomerEntity().getCustomerId());
-        Assertions.assertEquals("474748", mockOrderDetail.getProductEntities().get(0).getProductId());
-        Assertions.assertEquals("12345", mockOrderDetail.getCustomerId());
-        Assertions.assertEquals("474748", mockOrderDetail.getProductIds().get(0));
-        Assertions.assertEquals(zonedDateTime, mockOrderDetail.getTimestamp());
+        Assertions.assertEquals("12345", mockEnrichedOrderDTO.getCustomerEntity().getCustomerId());
+        Assertions.assertEquals("474748", mockEnrichedOrderDTO.getProductEntities().get(0).getProductId());
+        Assertions.assertEquals("12345", mockEnrichedOrderDTO.getCustomerId());
+        Assertions.assertEquals("474748", mockEnrichedOrderDTO.getProductIds().get(0));
+        Assertions.assertEquals(zonedDateTime, mockEnrichedOrderDTO.getTimestamp());
     }
 }
